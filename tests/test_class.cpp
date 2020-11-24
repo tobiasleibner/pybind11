@@ -322,6 +322,7 @@ TEST_SUBMODULE(class_, m) {
 
     class PublicistB : public ProtectedB {
     public:
+    ~PublicistB() override {};
         using ProtectedB::foo;
     };
 
