@@ -119,7 +119,9 @@ TEST_SUBMODULE(callbacks, m) {
 
     class AbstractBase {
     public:
-        virtual ~AbstractBase() {};
+        // Defaulting this destructor results in linking errors with the Intel compiler
+        // (in Debug builds only, tested with icpc (ICC) 2021.1 Beta 20200827)
+        virtual ~AbstractBase() {}; // NOLINT
         virtual unsigned int func() = 0;
     };
     m.def("func_accepting_func_accepting_base", [](std::function<double(AbstractBase&)>) { });

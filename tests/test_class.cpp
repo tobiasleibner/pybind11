@@ -322,6 +322,8 @@ TEST_SUBMODULE(class_, m) {
 
     class PublicistB : public ProtectedB {
     public:
+    // Removing this destructor results in linking errors with the Intel compiler
+    // (in Debug builds only, tested with icpc (ICC) 2021.1 Beta 20200827)
     ~PublicistB() override {};
         using ProtectedB::foo;
     };
