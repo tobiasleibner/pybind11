@@ -665,6 +665,10 @@ template <typename T> using is_function_pointer = bool_constant<
     std::is_pointer<T>::value && std::is_function<typename std::remove_pointer<T>::type>::value>;
 
 template <typename F> struct strip_function_object {
+    // If you are encountering an
+    // 'error: name followed by "::" must be a class or namespace name'
+    // with the Intel compiler and a noexcept function here,
+    // try to use noexcept(true) instead of plain noexcept.
     using type = typename remove_class<decltype(&F::operator())>::type;
 };
 
