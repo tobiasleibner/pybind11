@@ -2167,16 +2167,35 @@ private:
     dict m_kwargs;
 };
 
+#if defined(__INTEL_COMPILER) && defined(PYBIND11_CPP17)
+// We need this Intel compiler workaround because it fails to compile
+// the enable_if_t<!all_of<is_positional<Args>...>::value> part below
+// (tested with ICC 2021.1 Beta 20200827).
+template <typename... Args>
+constexpr bool args_are_all_positional()
+{
+  return all_of<is_positional<Args>...>::value;
+}
+#endif
+
 /// Collect only positional arguments for a Python function call
 template <return_value_policy policy, typename... Args,
+#if defined(__INTEL_COMPILER) && defined(PYBIND11_CPP17)
+          typename = enable_if_t<args_are_all_positional<Args...>()>>
+#else
           typename = enable_if_t<all_of<is_positional<Args>...>::value>>
+#endif
 simple_collector<policy> collect_arguments(Args &&...args) {
     return simple_collector<policy>(std::forward<Args>(args)...);
 }
 
 /// Collect all arguments, including keywords and unpacking (only instantiated when needed)
 template <return_value_policy policy, typename... Args,
+#if defined(__INTEL_COMPILER) && defined(PYBIND11_CPP17)
+          typename = enable_if_t<!args_are_all_positional<Args...>()>>
+#else
           typename = enable_if_t<!all_of<is_positional<Args>...>::value>>
+#endif
 unpacking_collector<policy> collect_arguments(Args &&...args) {
     // Following argument order rules for generalized unpacking according to PEP 448
     static_assert(
