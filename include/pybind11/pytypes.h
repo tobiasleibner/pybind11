@@ -1292,7 +1292,7 @@ public:
 #if defined(__INTEL_COMPILER) && defined(PYBIND11_CPP17)
               typename = detail::enable_if_t<args_are_all_keyword_or_ds<Args...>()>,
 #else
-              typename = detail::enable_if_t<detail::all_of<detail::is_keyword_or_ds<Args>...>::value>>,
+              typename = detail::enable_if_t<detail::all_of<detail::is_keyword_or_ds<Args>...>::value>,
 #endif
               // MSVC workaround: it can't compile an out-of-line definition, so defer the collector
               typename collector = detail::deferred_t<detail::unpacking_collector<>, Args...>>
